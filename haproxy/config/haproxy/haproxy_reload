@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PORT=80
+
+iptables -I INPUT -p tcp --dport $PORT --syn -j DROP
+sleep 1
+sv restart haproxy
+iptables -D INPUT -p tcp --dport $PORT --syn -j DROP

@@ -1,0 +1,2 @@
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+DOCKER_INTERNAL_IP=$(netstat -nr | grep '^0\.0\.0\.0' | awk '{ print $2 }')

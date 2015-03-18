@@ -1,0 +1,1 @@
+RELEASE=`cat /data/rails-app/RELEASE`

@@ -1,0 +1,138 @@
+---
+docker:
+  host: "https://boot2docker:2376"
+  ssl_verify_peer: false
+
+stacks:
+  -
+    name: rails
+    description: Rails stack
+    containers:
+
+      -
+        name: base-thin
+        version: 1.0.0
+        dockerfile: ./base-thin/Dockerfile
+        startable: false
+
+      -
+        name: base
+        version: 1.0.0
+        dockerfile: ./base/Dockerfile
+        startable: false
+        dependant_container_names:
+          - base-thin
+
+      -
+        name: consul
+        version: 1.0.0
+        docker_image: progrium/consul:latest
+        start_args: "-server -bootstrap -ui-dir /ui"
+        ports:
+          - "8400:8400"
+          - "8500:8500"
+          - "8600:53/udp"
+
+      -
+        name: postfix
+        version: 1.0.0
+        dockerfile: ./postfix/Dockerfile
+        ports:
+          - "25:25"
+        post_start_scripts:
+          - ./scripts/post_start.sh
+        volumes:
+          - /tmp/postfix/logs:/var/log
+        dependant_container_names:
+          - base-thin
+          - consul
+
+      -
+        name: haproxy
+        version: 1.0.0
+        dockerfile: ./haproxy/Dockerfile
+        ports:
+          - "80:80"
+        volumes:
+          - /tmp/haproxy/logs:/var/log
+        dependant_container_names:
+          - base-thin
+          - base
+          - consul
+
+      -
+        name: redis
+        version: 1.0.0
+        dockerfile: ./redis/Dockerfile
+        ports:
+          - "6379:6379"
+        volumes:
+          - /tmp/redis/logs:/var/log
+        dependant_container_names:
+          - base-thin
+          - consul
+
+      -
+        name: postgres
+        version: 1.0.0
+        dockerfile: ./postgres/Dockerfile
+        ports:
+          - "5432:5432"
+        volumes:
+          - /tmp/postgres/logs:/var/log
+          - /tmp/postgres/postgres:/var/lib/postgresql
+        post_start_scripts:
+          - ./scripts/post_start.sh
+        dependant_container_names:
+          - base-thin
+          - consul
+        env:
+          - "POSTGRES_DATABASE=rails_development"
+          - "POSTGRES_USER=percheron"
+          - "POSTGRES_PASSWORD=bf0dc3d666ae6f0a68b6839a20e6a5a4"
+
+      -
+        name: rails-app
+        version: 1.0.0
+        instances: 2
+        dockerfile: ./rails-app/docker/Dockerfile
+        volumes:
+          - /tmp/{{name}}/logs:/var/log
+          - /tmp/rails-app/vendor:/var/rails-app-vendor
+        pre_build_scripts:
+          - ./scripts/pre_build.sh
+        post_start_scripts:
+          - ./scripts/post_start.sh
+        dependant_container_names:
+          - base-thin
+          - base
+          - consul
+          - redis
+          - postgres
+        env:
+          - "RAILS_ENV=development"
+          - "POSTGRES_HOST=postgres.node.consul"
+          - "REDIS_HOST=redis.node.consul"
+
+      -
+        name: sidekiq
+        version: 1.0.0
+        dockerfile: ./sidekiq/Dockerfile
+        volumes:
+          - /tmp/sidekiq/logs:/var/log
+          - /tmp/rails-app/vendor:/var/rails-app-vendor
+        dependant_container_names:
+          - base-thin
+          - base
+          - consul
+          - redis
+          - postgres
+          - postfix
+        pre_build_scripts:
+          - ./scripts/pre_build.sh
+        post_start_scripts:
+          - ./scripts/post_start.sh
+        env:
+          - "RAILS_ENV=development"
+          - "POSTGRES_HOST=postgres.node.consul"
+          - "REDIS_HOST=redis.node.consul"
