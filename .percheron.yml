@@ -29,16 +29,12 @@ stacks:
         docker_image: progrium/consul:latest
         start_args: "-server -bootstrap -ui-dir /ui"
         ports:
-          - "8400:8400"
           - "8500:8500"
-          - "8600:53/udp"
 
       -
         name: postfix
         version: 1.0.0
         dockerfile: ./postfix/Dockerfile
-        ports:
-          - "25:25"
         post_start_scripts:
           - ./scripts/post_start.sh
         volumes:
@@ -52,7 +48,7 @@ stacks:
         version: 1.0.0
         dockerfile: ./haproxy/Dockerfile
         ports:
-          - "80:80"
+          - "1234:80"
         volumes:
           - /tmp/haproxy/logs:/var/log
         dependant_container_names:
@@ -64,8 +60,6 @@ stacks:
         name: redis
         version: 1.0.0
         dockerfile: ./redis/Dockerfile
-        ports:
-          - "6379:6379"
         volumes:
           - /tmp/redis/logs:/var/log
         dependant_container_names:

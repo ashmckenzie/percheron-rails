@@ -1,6 +1,6 @@
 # Percheron Rails stack example
 
-This repo contains a complete Rails stack for use with [Percheron](https://github.com/ashmckenzie/percheron).  
+This repo contains a complete Rails stack for use with [Percheron](https://github.com/ashmckenzie/percheron).
 
 The stack contains a Rails application that has a simple form that accepts and email address.  Once the form is posted, a Sidekiq job is enqueued, processed and an email sent!  This simple flow touches all containers below.
 
@@ -44,5 +44,13 @@ cd percheron-rails && bundle install && bundle exec percheron start rails
 Fill out the form and wait for the email! :)
 
 ```shell
-open http://${BOOT2DOCKER_IP}/
+open http://${BOOT2DOCKER_IP}:1234/
+```
+
+## Bonus
+
+The Consul UI is available at:
+
+```shell
+open http://boot2docker:8500/ui/
 ```
