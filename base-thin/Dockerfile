@@ -9,7 +9,6 @@ ENV DEBCONF_NOWARNINGS yes
 
 # Setup
 #
-RUN sed -i 's/archive\.ubuntu\.com/ftp.iinet.net.au\/linux/g' /etc/apt/sources.list
 RUN apt-get -y install apt-transport-https
 
 # Go
