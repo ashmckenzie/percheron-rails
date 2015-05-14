@@ -7,7 +7,7 @@ stacks:
   -
     name: rails
     description: Rails stack
-    containers:
+    units:
 
       -
         name: base-thin
@@ -88,7 +88,7 @@ stacks:
       -
         name: rails-app
         version: 1.0.0
-        instances: 2
+        instances: 3
         dockerfile: ./rails-app/docker/Dockerfile
         volumes:
           - /tmp/{{name}}/logs:/var/log
