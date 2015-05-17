@@ -20,7 +20,7 @@ stacks:
         version: 1.0.0
         dockerfile: ./base/Dockerfile
         startable: false
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
 
       -
@@ -39,7 +39,7 @@ stacks:
           - ./scripts/post_start.sh
         volumes:
           - /tmp/postfix/logs:/var/log
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - consul
 
@@ -51,7 +51,7 @@ stacks:
           - "1234:80"
         volumes:
           - /tmp/haproxy/logs:/var/log
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - base
           - consul
@@ -62,7 +62,7 @@ stacks:
         dockerfile: ./redis/Dockerfile
         volumes:
           - /tmp/redis/logs:/var/log
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - consul
 
@@ -77,7 +77,7 @@ stacks:
           - /tmp/postgres/postgres:/var/lib/postgresql
         post_start_scripts:
           - ./scripts/post_start.sh
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - consul
         env:
@@ -97,7 +97,7 @@ stacks:
           - ./scripts/pre_build.sh
         post_start_scripts:
           - ./scripts/post_start.sh
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - base
           - consul
@@ -115,7 +115,7 @@ stacks:
         volumes:
           - /tmp/sidekiq/logs:/var/log
           - /tmp/rails-app/vendor:/var/rails-app-vendor
-        dependant_container_names:
+        dependant_unit_names:
           - base-thin
           - base
           - consul
