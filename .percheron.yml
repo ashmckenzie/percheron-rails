@@ -10,18 +10,18 @@ stacks:
     units:
 
       -
-        name: base-thin
+        name: bare
         version: 1.0.0
-        dockerfile: ./base-thin/Dockerfile
+        dockerfile: ./_bare/Dockerfile
         startable: false
 
       -
         name: base
         version: 1.0.0
-        dockerfile: ./base/Dockerfile
+        dockerfile: ./_base/Dockerfile
         startable: false
         dependant_unit_names:
-          - base-thin
+          - bare
 
       -
         name: consul
@@ -40,7 +40,7 @@ stacks:
         volumes:
           - /tmp/postfix/logs:/var/log
         dependant_unit_names:
-          - base-thin
+          - bare
           - consul
 
       -
@@ -52,7 +52,7 @@ stacks:
         volumes:
           - /tmp/haproxy/logs:/var/log
         dependant_unit_names:
-          - base-thin
+          - bare
           - base
           - consul
 
@@ -63,7 +63,7 @@ stacks:
         volumes:
           - /tmp/redis/logs:/var/log
         dependant_unit_names:
-          - base-thin
+          - bare
           - consul
 
       -
@@ -78,7 +78,7 @@ stacks:
         post_start_scripts:
           - ./scripts/post_start.sh
         dependant_unit_names:
-          - base-thin
+          - bare
           - consul
         env:
           - "POSTGRES_DATABASE=rails_development"
@@ -86,19 +86,19 @@ stacks:
           - "POSTGRES_PASSWORD=bf0dc3d666ae6f0a68b6839a20e6a5a4"
 
       -
-        name: rails-app
+        name: app
         version: 1.0.0
         instances: 3
-        dockerfile: ./rails-app/docker/Dockerfile
+        dockerfile: ./app/docker/Dockerfile
         volumes:
           - /tmp/{{name}}/logs:/var/log
-          - /tmp/rails-app/vendor:/var/rails-app-vendor
+          - /tmp/app/vendor:/var/app-vendor
         pre_build_scripts:
           - ./scripts/pre_build.sh
         post_start_scripts:
           - ./scripts/post_start.sh
         dependant_unit_names:
-          - base-thin
+          - bare
           - base
           - consul
           - redis
@@ -114,9 +114,9 @@ stacks:
         dockerfile: ./sidekiq/Dockerfile
         volumes:
           - /tmp/sidekiq/logs:/var/log
-          - /tmp/rails-app/vendor:/var/rails-app-vendor
+          - /tmp/app/vendor:/var/app-vendor
         dependant_unit_names:
-          - base-thin
+          - bare
           - base
           - consul
           - redis

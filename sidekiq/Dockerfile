@@ -16,8 +16,8 @@ ADD ./services/sidekiq.sh /etc/service/sidekiq/run
 
 # Copy app
 #
-ADD ./tmp/rails-app.tar.gz /data/rails-app
-ADD ./tmp/RELEASE /data/rails-app/RELEASE
+ADD ./tmp/app.tar.gz /data/app
+ADD ./tmp/RELEASE /data/app/RELEASE
 
 # sidekiq user
 #
@@ -26,12 +26,12 @@ RUN adduser --uid 888 --system --group --shell /bin/bash sidekiq
 # Fix permissions
 #
 RUN chmod 755 /etc/service/*/run
-RUN mkdir -p /data/rails-app/tmp/pids
+RUN mkdir -p /data/app/tmp/pids
 RUN chown -R sidekiq:sidekiq /data
 
 # Build app
 #
-WORKDIR /data/rails-app
+WORKDIR /data/app
 
 # Volumes
 #

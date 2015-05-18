@@ -34,18 +34,18 @@ RUN adduser --uid 888 --system --group --shell /bin/bash rails
 
 # Copy app
 #
-ADD ./tmp/rails-app.tar.gz /data/rails-app
-ADD ./tmp/RELEASE /data/rails-app/RELEASE
+ADD ./tmp/app.tar.gz /data/app
+ADD ./tmp/RELEASE /data/app/RELEASE
 
 # Fix permissions
 #
 RUN chmod 755 /etc/service/*/run
-RUN mkdir -p /data/rails-app/tmp/pids
+RUN mkdir -p /data/app/tmp/pids
 RUN chown -R rails:rails /data /etc/nginx /var/lib/nginx /var/log/nginx
 
 # Build app
 #
-WORKDIR /data/rails-app
+WORKDIR /data/app
 
 # Volumes
 #

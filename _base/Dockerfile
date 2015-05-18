@@ -1,4 +1,4 @@
-FROM rails_base-thin:1.0.0
+FROM rails_bare:1.0.0
 MAINTAINER ash@the-rebellion.net
 
 ENV HOME /root
