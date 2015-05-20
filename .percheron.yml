@@ -4,35 +4,29 @@ docker:
   ssl_verify_peer: false
 
 stacks:
-  -
-    name: rails
+  - name: rails
     description: Rails stack
     units:
-
-      -
-        name: bare
+      - name: bare
         version: 1.0.0
         dockerfile: ./_bare/Dockerfile
         startable: false
 
-      -
-        name: base
+      - name: base
         version: 1.0.0
         dockerfile: ./_base/Dockerfile
         startable: false
         dependant_unit_names:
           - bare
 
-      -
-        name: consul
+      - name: consul
         version: 1.0.0
         docker_image: progrium/consul:latest
         start_args: "-server -bootstrap -ui-dir /ui"
         ports:
           - "8500:8500"
 
-      -
-        name: postfix
+      - name: postfix
         version: 1.0.0
         dockerfile: ./postfix/Dockerfile
         post_start_scripts:
@@ -43,8 +37,7 @@ stacks:
           - bare
           - consul
 
-      -
-        name: haproxy
+      - name: haproxy
         version: 1.0.0
         dockerfile: ./haproxy/Dockerfile
         ports:
@@ -56,8 +49,7 @@ stacks:
           - base
           - consul
 
-      -
-        name: redis
+      - name: redis
         version: 1.0.0
         dockerfile: ./redis/Dockerfile
         volumes:
@@ -66,8 +58,7 @@ stacks:
           - bare
           - consul
 
-      -
-        name: postgres
+      - name: postgres
         version: 1.0.0
         dockerfile: ./postgres/Dockerfile
         ports:
@@ -85,8 +76,7 @@ stacks:
           - "POSTGRES_USER=percheron"
           - "POSTGRES_PASSWORD=bf0dc3d666ae6f0a68b6839a20e6a5a4"
 
-      -
-        name: app
+      - name: app
         version: 1.0.0
         instances: 3
         dockerfile: ./app/docker/Dockerfile
@@ -108,8 +98,7 @@ stacks:
           - "POSTGRES_HOST=postgres.node.consul"
           - "REDIS_HOST=redis.node.consul"
 
-      -
-        name: sidekiq
+      - name: sidekiq
         version: 1.0.0
         dockerfile: ./sidekiq/Dockerfile
         volumes:
